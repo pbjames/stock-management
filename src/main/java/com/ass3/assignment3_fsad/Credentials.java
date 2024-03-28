@@ -1,3 +1,5 @@
+package com.ass3.assignment3_fsad;
+
 public class Credentials {
     //JDBC connection
     public static final String USERNAME = "james";

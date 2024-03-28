@@ -1,4 +1,4 @@
-/*
+package com.ass3.assignment3_fsad;/*
  * RecordsDatabaseServer.java
  *
  * The server main class.

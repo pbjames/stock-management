@@ -1,4 +1,4 @@
-/*
+package com.ass3.assignment3_fsad;/*
  * Client.java
  *
  * A client for accessing the records database
@@ -150,7 +150,7 @@ public class RecordsDatabaseClient extends Application {
 			String tmp = "";
 			System.out.println(tmp +"\n====================================\n");
         }catch(IOException e){
-            System.out.println("Client: I/O error. " + e);
+             System.out.println("Client: I/O error. " + e);
         }catch(ClassNotFoundException e){
             System.out.println("Client: Unable to cast read object to CachedRowSet. " + e);
         }catch(SQLException e){
