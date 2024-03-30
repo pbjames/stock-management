@@ -34,12 +34,9 @@ public class RecordsDatabaseServer {
         System.out.println("Server: Initializing server socket at " + theIPAddress + " with listening port " + thePort);
         System.out.println("Server: Exit server application by pressing Ctrl+C (Windows or Linux) or Opt-Cmd-Shift-Esc (Mac OSX)." );
         try {
-            //Initialize the socket
-
-            //TO BE COMPLETED
-            // Creates the server socket
-            // Reads creds from class Credentials
-
+            // DONE
+            int maxConnQ = 3;
+            serverSocket = new ServerSocket(thePort, maxConnQ, InetAddress.getByName(theIPAddress));
             System.out.println("Server: Server at " + theIPAddress + " is listening on port : " + thePort);
         } catch (Exception e){
             //The creation of the server socket can cause several exceptions;
@@ -59,10 +56,9 @@ public class RecordsDatabaseServer {
         try {
             //Service loop
             while (true) {
-                //TO BE COMPLETED
-				        // Listen for incoming client requests and create a service thread to attend to request
-
-				
+                // DONE
+                Socket aSocket = this.serverSocket.accept();
+                RecordsDatabaseService tmpServiceThread = new RecordsDatabaseService(aSocket);
             }
         } catch (Exception e){
             //The creation of the server socket can cause several exceptions;

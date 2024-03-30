@@ -43,11 +43,9 @@ public class RecordsDatabaseService extends Thread{
 
     //Class constructor
     public RecordsDatabaseService(Socket aSocket){
-        
-		  //TO BE COMPLETED
-      // Initialise server service socket attribute and launch service thread
-      // do week 9 lab exercise
-		
+        // DONE
+        serviceSocket = aSocket;
+        this.start();
     }
 
 
@@ -57,14 +55,32 @@ public class RecordsDatabaseService extends Thread{
         this.requestStr[0] = ""; //For artist
         this.requestStr[1] = ""; //For recordshop
 		
-		    String tmp = "";
+        String tmp = "";
         try {
-
 			//TO BE COMPLETED
-      // Accept server service requests
-      // Remove # , split by ; and return two elements
-			
-         }catch(IOException e){
+            // Accept server service requests
+            // Remove # , split by ; and return two elements
+            InputStream stream = this.serviceSocket.getInputStream();
+            InputStreamReader reader = new InputStreamReader(stream);
+
+            char tChar;
+            int currentBuffer = 0;
+            StringBuffer[] combinedSb = new StringBuffer[2];
+            while (true) {
+                tChar = (char) reader.read();
+                if (tChar == '#') {
+                    // Removes it ?
+                    break;
+                } else if (tChar == ';') {
+                    currentBuffer = 1;
+                } else {
+                    combinedSb[currentBuffer].append(tChar);
+                }
+            }
+            this.requestStr[0] = combinedSb[0].toString();
+            this.requestStr[1] = combinedSb[1].toString();
+
+        } catch(IOException e) {
             System.out.println("Service thread " + this.getId() + ": " + e);
         }
         return this.requestStr;
@@ -75,52 +91,55 @@ public class RecordsDatabaseService extends Thread{
     public boolean attendRequest()
     {
         boolean flagRequestAttended = true;
-		
 		this.outcome = null;
 		
-		String sql = ""; //TO BE COMPLETED- Update this line as needed.
-		
-		
+		String sql = "SELECT DISTINCT record.title, record.label, record.genre, record.rrp, COUNT(recordcopy) OVER (PARTITION BY record.title) FROM record INNER JOIN artist ON artist.lastname = ? and record.artistid = artist.artistid INNER JOIN recordshop ON recordshop.city = ? INNER JOIN recordcopy ON recordcopy.recordshopid = recordshop.recordshopid and recordcopy.recordid = record.recordid";
+
 		try {
-			//Connet to the database
-			//TO BE COMPLETED
-			
-			//Make the query
-			//TO BE COMPLETED
-			
-			//Process query
-			//TO BE COMPLETED -  Watch out! You may need to reset the iterator of the row set.
+			// DONE
+            DriverManager.registerDriver(new org.postgresql.Driver());
+            Connection con = DriverManager.getConnection(this.URL, this.USERNAME, this.PASSWORD);
 
-      // Pre-clean up
-      RowSetFactory aFactory = RowSetProvider.newFactory();
-      CachedRowSet crs = aFactory.createCachedRowSet() ;
-      crs.populate(rs); // rs = ResultSet
+            // DONE
+            PreparedStatement ppstmt = con.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ppstmt.setString(0, this.requestStr[0]);
+            ppstmt.setString(1, this.requestStr[1]);
 
-			//Clean up
-			//TO BE COMPLETED
-      //
-			
-		} catch (Exception e)
-		{ System.out.println(e); }
+			// DONE -  Watch out! You may need to reset the iterator of the row set using rs.beforeFirst()
+            ResultSet rs = ppstmt.executeQuery();
+            RowSetFactory aFactory = RowSetProvider.newFactory();
+            CachedRowSet crs = aFactory.createCachedRowSet();
+            crs.populate(rs);
+
+            // DONE
+            ppstmt.close();
+            rs.close();
+            con.close();
+
+            this.outcome = crs;
+
+		} catch (Exception e) {
+            System.out.println(e);
+        }
 
         return flagRequestAttended;
     }
 
 
 
-    //Wrap and return service outcome
     public void returnServiceOutcome(){
         try {
-			//Return outcome
-			//TO BE COMPLETED
-      // To send thru socket use ObjectOutputStream outcomeStreamWriter = new ...; osw.writeObject(...)
-			
+			// DONE
+            ObjectOutputStream outcomeStreamWriter = (ObjectOutputStream) this.serviceSocket.getOutputStream();
+            outcomeStreamWriter.flush();
+            outcomeStreamWriter.writeObject(this.outcome);
+
             System.out.println("Service thread " + this.getId() + ": Service outcome returned; " + this.outcome);
-            
-			//Terminating connection of the service socket
-			//TO BE COMPLETED
-			
-			
+
+            // DONE
+            outcomeStreamWriter.close();
+            this.serviceSocket.close();
+
         }catch (IOException e){
             System.out.println("Service thread " + this.getId() + ": " + e);
         }
