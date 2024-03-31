@@ -124,19 +124,24 @@ public class RecordsDatabaseClient extends Application {
 
 	//Initializes the client socket using the credentials from class Credentials.
 	public void initializeSocket(){
-        
-		//TO BE COMPLETED
-			
+		// DONE
+		try {
+			this.clientSocket = new Socket(Credentials.HOST, Credentials.PORT);
+		} catch (Exception e) {
+			System.out.println("Client socket initialise error: " + e);
+		}
 	}
 
 
     public void requestService() {
         try {
+			// DONE
             System.out.println("Client: Requesting records database service for user command\n" + this.userCommand +"\n");
-
-            //TO BE COMPLETED
-
-        }catch(IOException e){
+			OutputStream requestStream = this.clientSocket.getOutputStream();
+			OutputStreamWriter requestStreamWriter = new OutputStreamWriter(requestStream);
+			requestStreamWriter.write(userCommand + "#");
+			requestStreamWriter.flush();
+		}catch(IOException e){
             System.out.println("Client: I/O error. " + e);
         }
     }
@@ -145,9 +150,38 @@ public class RecordsDatabaseClient extends Application {
 
     public void reportServiceOutcome() {
         try {
-
             //TO BE COMPLETED
 			String tmp = "";
+			InputStream outcomeStream = clientSocket.getInputStream();
+			ObjectInputStream objOutcomeStream = (ObjectInputStream) outcomeStream;
+
+			serviceOutcome = (CachedRowSet) objOutcomeStream.readObject();
+
+			TableView<MyTableRecord> result = new TableView<MyTableRecord>();
+			//ObservableList<MyTableRecord> tmpRecords = result.getItems();
+			ObservableList<MyTableRecord> tmpRecords = ((TableView<MyTableRecord>) thePrimaryStage.getScene().lookup("table-view")).getItems();
+			tmpRecords.clear();
+
+
+			MyTableRecord record = new MyTableRecord();
+			record.setTitle(serviceOutcome.getString(0));
+			record.setLabel(serviceOutcome.getString(1));
+			record.setGenre(serviceOutcome.getString(2));
+			record.setRrp(serviceOutcome.getString(3));
+			record.setCopyID(serviceOutcome.getString(4)); // TODO: what
+			tmpRecords.add(record);
+
+			while (this.serviceOutcome.next()) {
+				record = new MyTableRecord();
+				record.setTitle(serviceOutcome.getString(0));
+				record.setLabel(serviceOutcome.getString(1));
+				record.setGenre(serviceOutcome.getString(2));
+				record.setRrp(serviceOutcome.getString(3));
+				record.setCopyID(serviceOutcome.getString(4)); // TODO: what
+				tmpRecords.add(record);
+			}
+
+			result.setItems(tmpRecords);
 			System.out.println(tmp +"\n====================================\n");
         }catch(IOException e){
              System.out.println("Client: I/O error. " + e);
@@ -167,7 +201,8 @@ public class RecordsDatabaseClient extends Application {
 		
 		//Build user message command
 
-		//TO BE COMPLETED
+		// DONE
+		userCommand = artistInputBox.getText() + ";" + recordshopInputBox.getText();
 
         //Request service
         try{

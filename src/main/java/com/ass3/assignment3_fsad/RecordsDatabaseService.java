@@ -137,7 +137,7 @@ public class RecordsDatabaseService extends Thread{
             System.out.println("Service thread " + this.getId() + ": Service outcome returned; " + this.outcome);
 
             // DONE
-            outcomeStreamWriter.close();
+        outcomeStreamWriter.close();
             this.serviceSocket.close();
 
         }catch (IOException e){
