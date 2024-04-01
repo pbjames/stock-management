@@ -150,7 +150,7 @@ public class RecordsDatabaseClient extends Application {
 
     public void reportServiceOutcome() {
         try {
-            //TO BE COMPLETED
+            // DONE
 			String tmp = "";
 			InputStream outcomeStream = clientSocket.getInputStream();
 			ObjectInputStream objOutcomeStream = new ObjectInputStream(outcomeStream);
