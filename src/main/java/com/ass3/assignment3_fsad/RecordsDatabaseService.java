@@ -66,6 +66,9 @@ public class RecordsDatabaseService extends Thread{
             char tChar;
             int currentBuffer = 0;
             StringBuffer[] combinedSb = new StringBuffer[2];
+            combinedSb[0] = new StringBuffer();
+            combinedSb[1] = new StringBuffer();
+
             while (true) {
                 tChar = (char) reader.read();
                 if (tChar == '#') {
@@ -102,11 +105,12 @@ public class RecordsDatabaseService extends Thread{
 
             // DONE
             PreparedStatement ppstmt = con.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ppstmt.setString(0, this.requestStr[0]);
-            ppstmt.setString(1, this.requestStr[1]);
+            ppstmt.setString(1, this.requestStr[0]);
+            ppstmt.setString(2, this.requestStr[1]);
 
 			// DONE -  Watch out! You may need to reset the iterator of the row set using rs.beforeFirst()
             ResultSet rs = ppstmt.executeQuery();
+            rs.beforeFirst();
             RowSetFactory aFactory = RowSetProvider.newFactory();
             CachedRowSet crs = aFactory.createCachedRowSet();
             crs.populate(rs);
@@ -130,14 +134,14 @@ public class RecordsDatabaseService extends Thread{
     public void returnServiceOutcome(){
         try {
 			// DONE
-            ObjectOutputStream outcomeStreamWriter = (ObjectOutputStream) this.serviceSocket.getOutputStream();
+            ObjectOutputStream outcomeStreamWriter = new ObjectOutputStream(this.serviceSocket.getOutputStream());
             outcomeStreamWriter.flush();
             outcomeStreamWriter.writeObject(this.outcome);
 
             System.out.println("Service thread " + this.getId() + ": Service outcome returned; " + this.outcome);
 
             // DONE
-        outcomeStreamWriter.close();
+            outcomeStreamWriter.close();
             this.serviceSocket.close();
 
         }catch (IOException e){

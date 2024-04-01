@@ -153,35 +153,30 @@ public class RecordsDatabaseClient extends Application {
             //TO BE COMPLETED
 			String tmp = "";
 			InputStream outcomeStream = clientSocket.getInputStream();
-			ObjectInputStream objOutcomeStream = (ObjectInputStream) outcomeStream;
+			ObjectInputStream objOutcomeStream = new ObjectInputStream(outcomeStream);
 
 			serviceOutcome = (CachedRowSet) objOutcomeStream.readObject();
 
-			TableView<MyTableRecord> result = new TableView<MyTableRecord>();
-			//ObservableList<MyTableRecord> tmpRecords = result.getItems();
-			ObservableList<MyTableRecord> tmpRecords = ((TableView<MyTableRecord>) thePrimaryStage.getScene().lookup("table-view")).getItems();
+			GridPane grid = (GridPane) thePrimaryStage.getScene().getRoot();
+			TableView<MyTableRecord> outputBox = (TableView<MyTableRecord>) grid.getChildren().get(5);
+			ObservableList<MyTableRecord> tmpRecords = outputBox.getItems();
+
+
 			tmpRecords.clear();
 
 
 			MyTableRecord record = new MyTableRecord();
-			record.setTitle(serviceOutcome.getString(0));
-			record.setLabel(serviceOutcome.getString(1));
-			record.setGenre(serviceOutcome.getString(2));
-			record.setRrp(serviceOutcome.getString(3));
-			record.setCopyID(serviceOutcome.getString(4)); // TODO: what
-			tmpRecords.add(record);
-
 			while (this.serviceOutcome.next()) {
 				record = new MyTableRecord();
-				record.setTitle(serviceOutcome.getString(0));
-				record.setLabel(serviceOutcome.getString(1));
-				record.setGenre(serviceOutcome.getString(2));
-				record.setRrp(serviceOutcome.getString(3));
-				record.setCopyID(serviceOutcome.getString(4)); // TODO: what
+				record.setTitle(serviceOutcome.getString(1));
+				record.setLabel(serviceOutcome.getString(2));
+				record.setGenre(serviceOutcome.getString(3));
+				record.setRrp(serviceOutcome.getString(4));
+				record.setCopyID(serviceOutcome.getString(5)); // TODO: what
 				tmpRecords.add(record);
 			}
 
-			result.setItems(tmpRecords);
+			outputBox.setItems(tmpRecords);
 			System.out.println(tmp +"\n====================================\n");
         }catch(IOException e){
              System.out.println("Client: I/O error. " + e);
@@ -194,7 +189,7 @@ public class RecordsDatabaseClient extends Application {
 
     //Execute client
     public void execute(){
- 		GridPane grid = (GridPane) thePrimaryStage.getScene().getRoot();
+		GridPane grid = (GridPane) thePrimaryStage.getScene().getRoot();
 		ObservableList<Node> childrens = grid.getChildren();
 		TextField artistInputBox = (TextField) childrens.get(1);
 		TextField recordshopInputBox = (TextField) childrens.get(3);
@@ -307,7 +302,7 @@ public class RecordsDatabaseClient extends Application {
 		
 		thePrimaryStage = primaryStage;
 
-		
+
     }
 
 
