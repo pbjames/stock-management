@@ -1,5 +1,5 @@
-# Pre-submission tasks
-- Delete package lines from Records*.java files
-- Use intellij zip to zip Records*.java files together
-- Verify imports and method signatures match
-- CONSULT ASSIGNMENT PDF file
+
+# Stock Management System
+
+Built with PostgresQL and a robust middle-man server to dispatch information
+across multiple machines.
