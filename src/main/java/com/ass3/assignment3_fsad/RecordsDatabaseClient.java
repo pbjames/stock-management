@@ -166,13 +166,21 @@ public class RecordsDatabaseClient extends Application {
 
 
 			MyTableRecord record = new MyTableRecord();
+			String title, label, genre, rrp, copyID;
 			while (this.serviceOutcome.next()) {
 				record = new MyTableRecord();
-				record.setTitle(serviceOutcome.getString(1));
-				record.setLabel(serviceOutcome.getString(2));
-				record.setGenre(serviceOutcome.getString(3));
-				record.setRrp(serviceOutcome.getString(4));
-				record.setCopyID(serviceOutcome.getString(5)); // TODO: what
+				title = serviceOutcome.getString(1);
+				label = serviceOutcome.getString(2);
+				genre = serviceOutcome.getString(3);
+				rrp = serviceOutcome.getString(4);
+				copyID = serviceOutcome.getString(5);
+				System.out.println(title + " | " + label + " | " + genre + " | " + rrp + " | " + copyID);
+
+				record.setTitle(title);
+				record.setLabel(label);
+				record.setGenre(genre);
+				record.setRrp(rrp);
+				record.setCopyID(copyID);
 				tmpRecords.add(record);
 			}
 

@@ -115,6 +115,17 @@ public class RecordsDatabaseService extends Thread{
             CachedRowSet crs = aFactory.createCachedRowSet();
             crs.populate(rs);
 
+            String title, label, genre, rrp, copyID;
+            while (crs.next()) {
+                title = crs.getString(1);
+                label = crs.getString(2);
+                genre = crs.getString(3);
+                rrp = crs.getString(4);
+                copyID = crs.getString(5);
+                System.out.println(title + " | " + label + " | " + genre + " | " + rrp + " | " + copyID);
+            }
+            crs.beforeFirst();
+
             // DONE
             ppstmt.close();
             rs.close();
