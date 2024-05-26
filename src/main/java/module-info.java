@@ -1,11 +1,11 @@
-module com.ass3.assignment3_fsad {
-    requires javafx.controls;
-    requires javafx.fxml;
-    requires java.sql;
-    requires java.sql.rowset;
-    requires org.postgresql.jdbc;
+module com.sm.stock_manager {
+  requires javafx.controls;
+  requires javafx.fxml;
+  requires java.sql;
+  requires java.sql.rowset;
+  requires org.postgresql.jdbc;
 
+  opens com.sm.stock_manager to javafx.fxml;
 
-    opens com.ass3.assignment3_fsad to javafx.fxml;
-    exports com.ass3.assignment3_fsad;
+  exports com.sm.stock_manager;
 }
